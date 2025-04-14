@@ -19,7 +19,7 @@ func NewRepository(db *pgxpool.Pool) Repository {
 }
 
 func (r *repository) GetAllUsers(ctx context.Context) ([]User, error) {
-	rows, err := r.db.Query(ctx, "SELECT id, name. email FROM users")
+	rows, err := r.db.Query(ctx, "SELECT id, name, email FROM users")
 	if err != nil {
 		return nil, err
 	}

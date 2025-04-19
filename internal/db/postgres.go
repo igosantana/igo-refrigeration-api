@@ -1,30 +1,25 @@
 package db
 
 import (
-	"context"
 	"log"
-	"time"
 
 	"github.com/igosantana/igo-refrigeration-api/internal/config"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func Connect() *pgxpool.Pool {
+func Connect() *gorm.DB {
 	dsn := config.AppConfig.DatabaseURL
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	dbpool, err := pgxpool.New(ctx, dsn)
+	db, err := gorm.Open(postgres.New(postgres.Config{
+		DSN:                  dsn,
+		PreferSimpleProtocol: true,
+	}), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("Erro ao criar pool de conexão: %v", err)
+		log.Fatalf("Erro ao conectar no banco de dados com GORM: %v", err)
 	}
 
-	if err := dbpool.Ping(ctx); err != nil {
-		log.Fatalf("Erro ao conectar no banco de dados: %v", err)
-	}
+	log.Println("✅ Conectado ao banco com GORM com sucesso")
 
-	log.Println("Conectado ao banco com sucesso")
-
-	return dbpool
+	return db
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/igosantana/igo-refrigeration-api/internal/config"
 	"github.com/igosantana/igo-refrigeration-api/internal/db"
+	"github.com/igosantana/igo-refrigeration-api/internal/router"
 	"github.com/joho/godotenv"
 )
 
@@ -18,9 +19,10 @@ func main() {
 	config.LoadEnv()
 
 	dbConn := db.Connect()
+	db.RunMigrations(dbConn)
 
-	r := routes.SetupRoutes(dbConn)
+	r := router.SetupRoutes(dbConn)
 
-	log.Println("API rodando na porta 8080")
-	http.ListenAndServe(":8080", r)
+	log.Println("API rodando na porta 8090")
+	http.ListenAndServe(":8090", r)
 }
